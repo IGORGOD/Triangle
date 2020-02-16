@@ -1,0 +1,6 @@
+C:\Users\Ihor I Great\Documents\Visual Studio 2017\Projects\Triangle\TriangleSolver\bin\Debug\ConsoleApplication.exe.config
+C:\Users\Ihor I Great\Documents\Visual Studio 2017\Projects\Triangle\TriangleSolver\bin\Debug\ConsoleApplication.exe
+C:\Users\Ihor I Great\Documents\Visual Studio 2017\Projects\Triangle\TriangleSolver\bin\Debug\ConsoleApplication.pdb
+C:\Users\Ihor I Great\Documents\Visual Studio 2017\Projects\Triangle\TriangleSolver\obj\x86\Debug\TriangleSolver.csproj.CoreCompileInputs.cache
+C:\Users\Ihor I Great\Documents\Visual Studio 2017\Projects\Triangle\TriangleSolver\obj\x86\Debug\ConsoleApplication.exe
+C:\Users\Ihor I Great\Documents\Visual Studio 2017\Projects\Triangle\TriangleSolver\obj\x86\Debug\ConsoleApplication.pdb

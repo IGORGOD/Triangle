@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
-using static System.Console;
 
 namespace TriangleSolver
 {
@@ -10,82 +11,50 @@ namespace TriangleSolver
     /// </summary>
     internal class Triangle
     {
-        /// <summary>
-        ///     Basic constructor, that provides loading triangle from file, has 3 prepared file
-        /// </summary>
-        public Triangle()
+        public Triangle(string filePath) : this(ReadFile(filePath))
         {
-            bool b;
-            int[][] tri;
-            do
+        }
+
+        private Triangle(string[] fileLines)
+        {
+            TriangleMatrix = null;
+
+            var length = fileLines.Length;
+            if (fileLines.Length == 0) throw new Exception("File is empty, please try another file.");
+
+            var nodes = new int[length][];
+            for (var i = 0; i < length; i++)
             {
-                WriteLine("Input path to file with triangle:");
-                WriteLine(
-                    "\t0 - for example triangle\n\t1 - for first triangle\n\t2 - for second triangle" +
-                    "\n\tin toher way - full path to file with triangle");
-                var s = ReadLine();
-                if (s == "0")
-                    s = "../../exampleTriangle.txt";
-                if (s == "1")
-                    s = "../../firstTriangle.txt";
-                if (s == "2")
-                    s = "../../secondTriangle.txt";
-                b = ReadFile(s, out tri);
-            } while (!b);
-            Tri = tri;
+                var lineElems = fileLines[i].Trim().Split(' ');
+                if (lineElems.Length != i + 1) throw new Exception("Triangle has wrong length, please try again.");
+
+                nodes[i] = new int[lineElems.Length];
+                if (lineElems.Where((t, j) => !int.TryParse(t, out nodes[i][j])).Any())
+                    throw new Exception("Triangle has symbols that can't be parse in int, please try again.");
+            }
+
+            TriangleMatrix = nodes;
         }
 
         /// <summary>
         ///     Property that presents Triangle as 2-dimensional array of integers
         /// </summary>
-        public int[][] Tri { get; }
+        public int[][] TriangleMatrix { get; }
 
         /// <summary>
-        ///     Method that provides reading from triangle file
+        ///     Method that provides reading from file
         /// </summary>
-        /// <param name="path">Path to triangle file</param>
-        /// <param name="file">2-dimensional array, that will presents triangle</param>
+        /// <param name="path">Path to file</param>
         /// <returns>
-        ///     result of read: true - if file exist, not empty and has triangle structure;
-        ///     false - in other case
+        ///     File lines
         /// </returns>
-        private static bool ReadFile(string path, out int[][] file)
+        private static string[] ReadFile(string path)
         {
-            string[] buf;
-            file = new int[0][];
-            try
-            {
-                buf = File.ReadAllLines(path);
-            }
-            catch (FileNotFoundException)
-            {
-                WriteLine("File is not exist, please try another filepath.");
-                return false;
-            }
-            var length = buf.Length;
-            if (length == 0)
-            {
-                WriteLine("File is empty, please try another file.");
-                return false;
-            }
-            file = new int[length][];
-            for (var i = 0; i < length; i++)
-            {
-                var buf2 = buf[i].Trim().Split(' ');
-                if (buf2.Length != i + 1)
-                {
-                    WriteLine("Triangle has wrong length, please try again.");
-                    return false;
-                }
-                file[i] = new int[buf2.Length];
-                for (var j = 0; j < buf2.Length; j++)
-                    if (!int.TryParse(buf2[j], out file[i][j]))
-                    {
-                        WriteLine("Triangle has symbols that can't be parse in int, please try again.");
-                        return false;
-                    }
-            }
-            return true;
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentNullException();
+            if (!File.Exists(path))
+                throw new FileNotFoundException();
+            return File.ReadAllLines(path);
         }
 
         /// <summary>
@@ -94,41 +63,43 @@ namespace TriangleSolver
         /// <returns>String view of route includes integer value from top to bottom and route weight in the end</returns>
         public string GetMaxRoute()
         {
-            var al = new List<Route>();
-            Route nBuf;
-            for (var i = 0; i < Tri[Tri.Length - 2].Length; i++)
+            var routes = new List<Route>();
+            Route route;
+            for (var i = 0; i < TriangleMatrix[TriangleMatrix.Length - 2].Length; i++)
             {
-                nBuf = new Route();
-                var j = Tri.Length - 1;
-                var k = Tri[j][i] > Tri[j][i + 1] ? i : i + 1;
-                nBuf.AddNode(j, k, Tri[j][k]);
-                nBuf.AddNode(j - 1, i, Tri[j - 1][i]);
-                al.Add(nBuf);
+                route = new Route();
+                var j = TriangleMatrix.Length - 1;
+                var k = TriangleMatrix[j][i] > TriangleMatrix[j][i + 1] ? i : i + 1;
+                route.AddNode(j, k, TriangleMatrix[j][k]);
+                route.AddNode(j - 1, i, TriangleMatrix[j - 1][i]);
+                routes.Add(route);
             }
-            for (var i = Tri.Length - 3; i >= 0; i--)
+
+            for (var i = TriangleMatrix.Length - 3; i >= 0; i--)
             {
-                var buf = Tri[i];
-                var al2 = new Route[al.Count];
-                al.CopyTo(al2);
-                al.Clear();
+                var buf = TriangleMatrix[i];
+                var al2 = new Route[routes.Count];
+                routes.CopyTo(al2);
+                routes.Clear();
                 for (var j = 0; j < buf.Length; j++)
                 {
-                    nBuf =
+                    route =
                         new Route(al2[j].Weight > al2[j + 1].Weight ? al2[j] : al2[j + 1]);
-                    nBuf.AddNode(i, j, Tri[i][j]);
-                    al.Add(nBuf);
+                    route.AddNode(i, j, TriangleMatrix[i][j]);
+                    routes.Add(route);
                 }
             }
+
             var sb = new StringBuilder();
-            int[][] ids;
-            var weight = al[0].GetRoute(out ids);
-            for (var i = 0; i < ids.Length; i++)
+            var ids = routes[0].GetRoute(out var weight);
+            sb.Append($"{TriangleMatrix[ids[0][0]][ids[0][1]]} ");
+            for (var i = 1; i < ids.Length; i++)
             {
                 var buf = ids[i];
-                sb.Append($"{Tri[buf[0]][buf[1]]} ");
-                if (i != ids.Length - 1) sb.Append("-> ");
+                sb.Append($"-> {TriangleMatrix[buf[0]][buf[1]]} ");
             }
-            sb.Append($"\n With total weight {weight}");
+
+            sb.Append($"\nWith total weight {weight}");
             return sb.ToString();
         }
 
@@ -140,23 +111,23 @@ namespace TriangleSolver
             public Route()
             {
                 Weight = 0;
-                Al = new List<int[]>();
+                RouteIndexes = new List<int[]>();
             }
 
             /// <summary>
-            ///     Constructor, that creates new Route on data from givven Route
+            ///     Constructor, that creates new Route on data from given Route
             /// </summary>
-            /// <param name="r">Route which will used to create new</param>
-            public Route(Route r)
+            /// <param name="route">Route which will used to create new</param>
+            public Route(Route route)
             {
-                Weight = r.Weight;
-                Al = new List<int[]>(r.Al);
+                Weight = route.Weight;
+                RouteIndexes = new List<int[]>(route.RouteIndexes);
             }
 
             /// <summary>
             ///     Property that presents List of node indexes
             /// </summary>
-            private List<int[]> Al { get; }
+            private List<int[]> RouteIndexes { get; }
 
             /// <summary>
             ///     Property that presents weight of route
@@ -171,23 +142,21 @@ namespace TriangleSolver
             /// <param name="weight">Weight of node</param>
             public void AddNode(int i, int j, int weight)
             {
-                int[] buf = {i, j};
-                Al.Add(buf);
+                RouteIndexes.Add(new[] {i, j});
                 Weight += weight;
             }
 
             /// <summary>
-            ///     Method that reverse route and put it into givven variable
+            ///     Method that reverse route and put it into given variable
             /// </summary>
-            /// <param name="ids">Array in which route will be putten</param>
-            /// <returns>Weight of route</returns>
-            public int GetRoute(out int[][] ids)
+            /// <param name="weight">Route weight</param>
+            /// <returns>Route - array of Nodes</returns>
+            public int[][] GetRoute(out int weight)
             {
-                var buf = new List<int[]>(Al);
-                buf.Reverse();
-                ids = new int[buf.Count][];
-                buf.CopyTo(ids);
-                return Weight;
+                weight = Weight;
+                var res = new List<int[]>(RouteIndexes);
+                res.Reverse();
+                return res.ToArray();
             }
         }
     }

@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.960
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TriangleSolver", "TriangleSolver\TriangleSolver.csproj", "{12DD516D-2A09-4E41-942F-7AE4DE0E19F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TriangleSolver", "TriangleSolver\TriangleSolver.csproj", "{84262332-ED28-4227-86D5-D0DDD15A0FC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{12DD516D-2A09-4E41-942F-7AE4DE0E19F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{12DD516D-2A09-4E41-942F-7AE4DE0E19F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{12DD516D-2A09-4E41-942F-7AE4DE0E19F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{12DD516D-2A09-4E41-942F-7AE4DE0E19F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84262332-ED28-4227-86D5-D0DDD15A0FC9}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{84262332-ED28-4227-86D5-D0DDD15A0FC9}.Debug|Any CPU.Build.0 = Debug|x86
+		{84262332-ED28-4227-86D5-D0DDD15A0FC9}.Release|Any CPU.ActiveCfg = Release|x86
+		{84262332-ED28-4227-86D5-D0DDD15A0FC9}.Release|Any CPU.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6F4B0C65-EF2B-4D40-8078-8D8E70307C22}
 	EndGlobalSection
 EndGlobal
